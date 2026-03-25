@@ -26,7 +26,7 @@ def extract_features(audio_path):
     y, sr = librosa.load(audio_path, sr=22050, res_type='kaiser_fast')
     
     # 2. Extract exactly 40 MFCCs
-    mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=40)
+    mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
     
     # 3. Calculate the Mean across the time axis (axis=1)
     # This results in exactly 40 numbers.
