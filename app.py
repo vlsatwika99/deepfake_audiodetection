@@ -20,23 +20,29 @@ model, scaler = load_assets()
 
 # 3. FEATURE EXTRACTION
 # 3. FEATURE EXTRACTION (Bulletproof Version)
+# 3. FEATURE EXTRACTION (The Corrected Version)
 def extract_features(audio_path):
-    # 1. Force the sampling rate to 22050 (The standard for your trained model)
+    # 1. Force the Sampling Rate to match your Training Data
     y, sr = librosa.load(audio_path, sr=22050, res_type='kaiser_fast')
     
     # 2. Extract exactly 40 MFCCs
     mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=40)
     
-    # 3. Average across time (Resulting in a 1D array of 40 numbers)
+    # 3. Calculate the Mean across the time axis (axis=1)
+    # This results in exactly 40 numbers.
     mfccs_processed = np.mean(mfccs, axis=1)
     
-    # 4. Reshape to (1, 40) so the Scaler sees "1 Sample with 40 Traits"
+    # 4. Reshape to (1, 40)
     features_reshaped = mfccs_processed.reshape(1, -1)
     
-    # 5. Transform using the Scaler from Kaggle
+    # 5. DEBUG: This will print the shape in your Streamlit Logs
+    # It should say (1, 40). If it doesn't, we found the bug!
+    print(f"Feature Shape: {features_reshaped.shape}")
+    
+    # 6. Transform using the Scaler
     features_scaled = scaler.transform(features_reshaped)
     
-    return features_scaled
+    return features_scaled features_scaled
 
 # 4. APP INTERFACE
 uploaded_file = st.file_uploader("Upload Audio", type=["wav", "mp3"])
