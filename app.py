@@ -42,7 +42,7 @@ def extract_features(audio_path):
     # 6. Transform using the Scaler
     features_scaled = scaler.transform(features_reshaped)
     
-    return features_scaled features_scaled
+    return features_scaled 
 
 # 4. APP INTERFACE
 uploaded_file = st.file_uploader("Upload Audio", type=["wav", "mp3"])
