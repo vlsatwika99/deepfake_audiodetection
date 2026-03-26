@@ -59,6 +59,6 @@ if uploaded_file is not None:
             prediction = model.predict(final_features)
             
             if prediction[0] == 1:
-                st.error("🚨 Result: DEEPFAKE")
+                st.error(" Result: DEEPFAKE")
             else:
-                st.success("✅ Result: HUMAN")
+                st.success(" Result: HUMAN")
