@@ -75,20 +75,3 @@ with col2:
             })
             st.bar_chart(mfcc_data.set_index('Coefficient'))
 
-# 5. EXPANDABLE TECHNICAL DETAILS
-if uploaded_file and analyze_btn:
-    st.markdown("---")
-    with st.expander("View Detailed Forensic Reasoning"):
-        t_col1, t_col2 = st.columns(2)
-        with t_col1:
-            st.write("**Technical Insight:**")
-            st.info(reason)
-        with t_col2:
-            st.write("**System Metadata:**")
-            st.json({
-                "Model Architecture": "Non-linear SVM-RBF",
-                "Feature Set": "13-Dimensional MFCC",
-                "Sampling Rate": "22,050 Hz",
-                "Normalization": "Z-Score Scaled",
-                "Inference Engine": "Scikit-Learn 1.6.1"
-            })
