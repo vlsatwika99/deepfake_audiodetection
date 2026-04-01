@@ -2,15 +2,16 @@ import streamlit as st
 import librosa
 import numpy as np
 import joblib
+import pandas as pd
 
 # 1. UI SETUP
-st.set_page_config(page_title="DeepFake Detector")
-st.title("🛡️ Audio DeepFake Detector")
+st.set_page_config(page_title="DeepFake Detector", layout="wide")
+st.title(" Audio DeepFake Detector")
+st.markdown("---")
 
-# 2. LOAD ASSETS
+# 2. LOAD ASSETS (Global Model & Scaler)
 @st.cache_resource
 def load_assets():
-    # Ensure these .pkl files are in your GitHub repo
     model = joblib.load('global_deepfake_model.pkl')
     scaler = joblib.load('global_scaler.pkl')
     return model, scaler
@@ -22,47 +23,72 @@ def extract_features(audio_path):
     # Standardize sampling rate to 22.05kHz
     y, sr = librosa.load(audio_path, sr=22050, res_type='kaiser_fast')
     
-    # Extract 13 MFCCs to match your Global Model
+    # Extract 13 MFCCs
     mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
     
-    # Calculate Mean and Reshape to (1, 13)
+    # Calculate Mean across the time axis
     mfccs_processed = np.mean(mfccs, axis=1).reshape(1, -1)
     
     # Transform using the Scaler
     features_scaled = scaler.transform(mfccs_processed)
     
-    return features_scaled 
+    return features_scaled, mfccs_processed
 
 # 4. APP INTERFACE
-uploaded_file = st.file_uploader("Upload Audio", type=["wav", "mp3"])
+col1, col2 = st.columns([1, 1])
 
-if uploaded_file is not None:
-    st.audio(uploaded_file)
-    
-    if st.button("Check Authenticity"):
+with col1:
+    st.subheader("📁 Upload & Playback")
+    uploaded_file = st.file_uploader("Choose a WAV or MP3 file", type=["wav", "mp3"])
+    if uploaded_file:
+        st.audio(uploaded_file)
+        analyze_btn = st.button("Check Authenticity", use_container_width=True)
+
+with col2:
+    st.subheader(" Analysis Results")
+    if uploaded_file and analyze_btn:
         with st.spinner("Analyzing spectral fingerprints..."):
-            # --- EVERYTHING BELOW MUST BE INDENTED ---
+            # Extract features and raw values for visualization
+            final_features, raw_mfccs = extract_features(uploaded_file)
             
-            # 1. Extract AND Scale
-            final_features = extract_features(uploaded_file)
-            
-            # 2. Get the "Distance" from the boundary (Hyperplane)
-            # Positive = Deepfake, Negative = Human
+            # 1. Get Distance from Hyperplane
             decision_score = model.decision_function(final_features)[0]
             confidence = min(abs(decision_score) * 100, 100) 
 
-            # 3. Show Result based on the Score
+            # 2. Show Result
             if decision_score > 0:
-                st.error("🚨 Result: DEEPFAKE DETECTED")
+                st.error("Result: DEEPFAKE DETECTED")
                 reason = "The model detected high-frequency mathematical artifacts typical of AI cloning."
             else:
-                st.success("✅ Result: HUMAN VOICE")
+                st.success("Result: HUMAN VOICE")
                 reason = "The vocal tract resonance patterns align with natural human speech characteristics."
 
-            # 4. Attractive UI Elements
-            st.write(f"**Confidence Level:** {confidence:.2f}%")
+            # 3. Confidence Gauge
+            st.write(f"**Model Confidence:** {confidence:.2f}%")
             st.progress(int(confidence))
 
-            with st.expander("Why this result?"):
-                st.write(f"**Technical Insight:** {reason}")
-                st.info("This decision is based on a 13-dimensional MFCC fingerprint mapped against a non-linear SVM-RBF boundary.")
+            # 4. NEW: Spectral Fingerprint Visualization
+            st.write("### Spectral Fingerprint (MFCCs)")
+            mfcc_data = pd.DataFrame({
+                'Coefficient': [f"MFCC {i+1}" for i in range(13)],
+                'Energy Value': raw_mfccs.flatten()
+            })
+            st.bar_chart(mfcc_data.set_index('Coefficient'))
+
+# 5. EXPANDABLE TECHNICAL DETAILS
+if uploaded_file and analyze_btn:
+    st.markdown("---")
+    with st.expander("View Detailed Forensic Reasoning"):
+        t_col1, t_col2 = st.columns(2)
+        with t_col1:
+            st.write("**Technical Insight:**")
+            st.info(reason)
+        with t_col2:
+            st.write("**System Metadata:**")
+            st.json({
+                "Model Architecture": "Non-linear SVM-RBF",
+                "Feature Set": "13-Dimensional MFCC",
+                "Sampling Rate": "22,050 Hz",
+                "Normalization": "Z-Score Scaled",
+                "Inference Engine": "Scikit-Learn 1.6.1"
+            })
