@@ -61,19 +61,7 @@ with col2:
             st.write(f"**Model Confidence:** {confidence:.2f}%")
             st.progress(int(confidence))
 
-            # Forensic Reasoning
-            with st.expander("🔬 View Technical Reasoning"):
-                st.write("**Insight:**")
-                st.info(reason)
-                
-            with st.expander("⚙️ System Metadata"):
-                st.json({
-                    "Model": "Non-linear SVM-RBF",
-                    "Input Dimension": "13-MFCC Vector",
-                    "Normalization": "Standard Z-Score",
-                    "Inference Engine": "Scikit-Learn 1.6.1",
-                    "Target Sample Rate": "22,050 Hz"
-                })
+          
     else:
         st.write("Results will appear here after analysis.")
 
