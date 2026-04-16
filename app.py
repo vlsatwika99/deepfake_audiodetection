@@ -5,7 +5,7 @@ import joblib
 
 # 1. UI SETUP
 st.set_page_config(page_title="DeepFake Detector", layout="wide") 
-st.title("🛡️ Audio DeepFake Detector")
+st.title(" Audio DeepFake Detector")
 st.markdown("---")
 
 # 2. LOAD ASSETS (Kaggle-trained models)
@@ -33,7 +33,7 @@ def extract_features(audio_path):
 col1, col2 = st.columns(2, gap="large")
 
 with col1:
-    st.subheader("📁 Step 1: Upload Audio")
+    st.subheader(" Step 1: Upload Audio")
     uploaded_file = st.file_uploader("Upload a WAV or MP3 file", type=["wav", "mp3"])
     
     if uploaded_file:
@@ -42,7 +42,7 @@ with col1:
         analyze_btn = st.button("Check Authenticity", use_container_width=True)
 
 with col2:
-    st.subheader("🔍 Step 2: Analysis Results")
+    st.subheader(" Step 2: Analysis Results")
     
     if uploaded_file and analyze_btn:
         with st.spinner("Extracting spectral fingerprints..."):
@@ -56,7 +56,7 @@ with col2:
 
             # C. DYNAMIC REASONING LOGIC (The "Why")
             if decision_score > 0:
-                st.error("🚨 Result: DEEPFAKE DETECTED")
+                st.error(" Result: DEEPFAKE DETECTED")
                 
                 # Logic based on real confidence level
                 if confidence > 75:
@@ -71,7 +71,7 @@ with col2:
                 * **Entropy:** Detected low randomness, indicating a synthetic pattern-based origin.
                 """)
             else:
-                st.success("✅ Result: HUMAN VOICE")
+                st.success(" Result: HUMAN VOICE")
                 
                 # Logic based on real confidence level
                 if confidence > 75:
@@ -91,13 +91,6 @@ with col2:
             st.progress(int(confidence))
 
             # E. System Metadata
-            with st.expander("⚙️ System Metadata"):
-                st.json({
-                    "Model": "Non-linear SVM-RBF",
-                    "Input Dimension": "13-MFCC Vector",
-                    "Normalization": "Standard Z-Score",
-                    "Inference Engine": "Scikit-Learn 1.6.1",
-                    "Target Sample Rate": "22,050 Hz"
-                })
+           
     else:
         st.write("Perform analysis to view detailed spectral reasoning.")
