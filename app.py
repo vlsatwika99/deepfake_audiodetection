@@ -28,7 +28,7 @@ def get_llm_reasoning(result, confidence, mfcc_values):
         # THE 2026 CLIENT SYNTAX
         # We use gemini-1.5-flash for the fastest response
         response = client.models.generate_content(
-            model="gemini-3.1-flash", 
+            model="gemini-2.5-flash", 
             contents=prompt
         )
         return response.text
