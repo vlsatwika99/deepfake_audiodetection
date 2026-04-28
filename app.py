@@ -3,7 +3,7 @@ import librosa
 import numpy as np
 import joblib
 import os
-from google import genai  # Modern 2026 SDK
+from google import genai  
 
 
 st.set_page_config(page_title="DeepFake Detector", layout="wide") 
