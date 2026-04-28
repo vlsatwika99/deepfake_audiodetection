@@ -7,7 +7,7 @@ from google import genai  # Modern 2026 SDK
 
 # 1. UI SETUP
 st.set_page_config(page_title="DeepFake Detector", layout="wide") 
-st.title("🛡️ Audio DeepFake Detector")
+st.title(" Audio DeepFake Detector")
 st.markdown("---")
 
 # 2. LLM SETUP (Using Gemini 3.1 for stable forensic reporting)
@@ -82,7 +82,7 @@ def extract_features(audio_path):
 col1, col2 = st.columns(2, gap="large")
 
 with col1:
-    st.subheader("📁 Step 1: Upload Audio")
+    st.subheader(" Step 1: Upload Audio")
     uploaded_file = st.file_uploader("Upload WAV or MP3", type=["wav", "mp3"])
     
     if uploaded_file:
@@ -92,7 +92,7 @@ with col1:
             st.session_state.analyze = True
 
 with col2:
-    st.subheader("🔍 Step 2: Analysis Results")
+    st.subheader(" Step 2: Analysis Results")
     
     if uploaded_file and st.session_state.get('analyze'):
         with st.spinner("🤖 Analyzing harmonics and spectral texture..."):
@@ -107,14 +107,14 @@ with col2:
             if probs[1] > 0.5:
                 res_label = "DEEPFAKE"
                 conf = probs[1] * 100
-                st.error(f"🚨 Result: {res_label} DETECTED")
+                st.error(f" Result: {res_label} DETECTED")
             else:
                 res_label = "HUMAN"
                 conf = probs[0] * 100
-                st.success(f"✅ Result: {res_label} VOICE")
+                st.success(f" Result: {res_label} VOICE")
 
             # D. The AI Report
-            st.markdown("### 🧬 AI Forensic Reasoning")
+            st.markdown("###  AI Forensic Reasoning")
             explanation = get_llm_reasoning(res_label, conf, raw_vals)
             st.write(explanation)
 
@@ -123,7 +123,7 @@ with col2:
             st.progress(int(conf))
 
             # F. System Specs (Optional Debugging Info)
-            with st.expander("⚙️ System Metadata"):
+            with st.expander(" System Metadata"):
                 st.json({
                     "Model": "Random Forest (Ensemble)",
                     "Features": "39 (MFCC, Contrast, Chroma)",
