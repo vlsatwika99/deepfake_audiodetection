@@ -83,7 +83,7 @@ col1, col2 = st.columns(2, gap="large")
 
 with col1:
     st.subheader(" Step 1: Upload Audio")
-    uploaded_file = st.file_uploader("Upload WAV", type=["wav", "mp3"])
+    uploaded_file = st.file_uploader("Upload WAV", type=["wav"])
     
     if uploaded_file:
         st.info("Audio loaded. Ready for analysis.")
